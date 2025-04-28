@@ -8,7 +8,3 @@ data class Message(
     val isUser: Boolean
 )
 
-data class ApiResponse(
-    val success: Boolean,
-    val message: String
-)
