@@ -1,13 +1,11 @@
 package com.example.hama2
 
-import org.json.JSONObject
 import android.Manifest
 import android.content.ContentValues
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,15 +14,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hama2.databinding.FragmentFirstBinding
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.Response
-import java.io.IOException
 import android.widget.Toast
 
 class FirstFragment : Fragment() {
@@ -62,71 +51,6 @@ class FirstFragment : Fragment() {
             ).show()
         }
     }
-
-
-    private fun sendMessageToServer(prompt: String?, imageUri: Uri?, onResult: (String) -> Unit) {
-        val resolver = requireContext().contentResolver
-        val client = OkHttpClient()
-
-        val requestBodyBuilder = MultipartBody.Builder().setType(MultipartBody.FORM)
-        prompt?.let { requestBodyBuilder.addFormDataPart("prompt", it) }
-        imageUri?.let { uri ->
-            resolver.openInputStream(uri)?.use { input ->
-                val bytes = input.readBytes()
-                requestBodyBuilder.addFormDataPart(
-                    "image",
-                    "upload.jpg",
-                    bytes.toRequestBody("image/jpeg".toMediaTypeOrNull())
-                )
-            }
-        }
-
-        val request = Request.Builder()
-            .url("http://192.168.1.13:5000/api/message")
-            .post(requestBodyBuilder.build())
-            .build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                // Log the exception
-                Log.e("FirstFragment", "Network failure", e)
-
-                requireActivity().runOnUiThread {
-                    val msg = "Unable to reach server: ${e.localizedMessage}"
-                    Log.d("FirstFragment", msg)  // Log the toast message
-                    Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show()
-                    onResult("Failed to connect to server.")
-                }
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                val bodyString = response.body?.string()
-                requireActivity().runOnUiThread {
-                    if (!response.isSuccessful || bodyString.isNullOrEmpty()) {
-                        val errMsg = "Error ${response.code}: ${bodyString ?: "No details"}"
-                        Log.w("FirstFragment", errMsg)
-                        Toast.makeText(requireContext(), errMsg, Toast.LENGTH_LONG).show()
-                        onResult(errMsg)
-                    } else {
-                        try {
-                            // Parse the JSON and extract the "response" field
-                            val json = JSONObject(bodyString)
-                            val aiReply = json.optString("response", bodyString)
-                            Log.i("FirstFragment", "AI reply: $aiReply")
-                            onResult(aiReply)
-                        } catch (e: Exception) {
-                            // If parsing fails, just fallback to the raw body
-                            Log.e("FirstFragment", "JSON parse error", e)
-                            onResult(bodyString)
-                        }
-                    }
-                }
-            }
-
-        })
-    }
-
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -169,17 +93,17 @@ class FirstFragment : Fragment() {
             pickedImageUri = null
             binding.ivPreview.visibility = View.GONE
 
-            sendMessageToServer(text, uri) { serverResponse ->
+            ApiService.sendMessage(requireContext(), text, uri) { serverResponse ->
+                val replyText = serverResponse.response ?: serverResponse.error ?: "Unknown error."
                 adapter.addMessage(
                     Message(
-                        text = serverResponse,
+                        text = replyText,
                         isUser = false
                     )
                 )
                 binding.rvMessages.scrollToPosition(adapter.itemCount - 1)
             }
         }
-
 
         binding.btnInsertPhoto.setOnClickListener {
             checkCameraPermissionAndOpenCamera()

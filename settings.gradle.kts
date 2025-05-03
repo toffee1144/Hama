@@ -16,6 +16,15 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven {
+            url = uri("https://jitpack.io")
+        }
+        // Eclipse Paho MQTT releases
+        maven {
+            url = uri("https://repo.eclipse.org/content/repositories/paho-releases/")
+        }
+
+
     }
 }
 

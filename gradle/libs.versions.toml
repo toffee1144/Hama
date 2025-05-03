@@ -4,6 +4,9 @@ gson = "2.10.1"
 kotlin = "2.0.21"
 coreKtx = "1.10.1"
 junit = "4.13.2"
+mpandroidchart = "v3.1.0"
+orgEclipsePahoAndroidService = "1.1.1"
+orgEclipsePahoClientMqttv3 = "1.1.0"
 retrofit = "2.11.0"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
@@ -15,10 +18,15 @@ navigationFragmentKtx = "2.6.0"
 navigationUiKtx = "2.6.0"
 okhttp = "4.12.0"
 okio = "3.6.0"
+squareupLoggingInterceptor = "4.9.0"
 
 [libraries]
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+logging-interceptor-v490 = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "squareupLoggingInterceptor" }
+mpandroidchart = { module = "com.github.PhilJay:MPAndroidChart", version.ref = "mpandroidchart" }
+org-eclipse-paho-android-service = { module = "org.eclipse.paho:org.eclipse.paho.android.service", version.ref = "orgEclipsePahoAndroidService" }
+org-eclipse-paho-client-mqttv3 = { module = "org.eclipse.paho:org.eclipse.paho.client.mqttv3", version.ref = "orgEclipsePahoClientMqttv3" }
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }

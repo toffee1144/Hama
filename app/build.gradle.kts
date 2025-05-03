@@ -39,7 +39,12 @@ android {
 }
 
 dependencies {
+    implementation(libs.logging.interceptor.v490)
+    implementation(libs.org.eclipse.paho.client.mqttv3)
+    implementation(libs.org.eclipse.paho.android.service)
+    implementation("com.squareup.okhttp3:okhttp-sse:4.11.0")
     implementation(libs.okhttp)
+    implementation(libs.mpandroidchart)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

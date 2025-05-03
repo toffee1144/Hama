@@ -7,9 +7,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-private const val TYPE_USER     = 0
-private const val TYPE_RESPONSE = 1
-
 class MessageAdapter(
     private val items: MutableList<Message>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
