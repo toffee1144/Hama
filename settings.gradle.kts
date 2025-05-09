@@ -21,7 +21,7 @@ dependencyResolutionManagement {
         }
         // Eclipse Paho MQTT releases
         maven {
-            url = uri("https://repo.eclipse.org/content/repositories/paho-releases/")
+            url = uri("https://repo.eclipse.org/content/repositories/paho-snapshots/")
         }
 
 

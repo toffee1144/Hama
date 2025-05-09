@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.hama2"
-        minSdk = 24
+        minSdk = 31
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -39,10 +39,16 @@ android {
 }
 
 dependencies {
+    implementation (libs.androidx.localbroadcastmanager)
     implementation(libs.logging.interceptor.v490)
     implementation(libs.org.eclipse.paho.client.mqttv3)
     implementation(libs.org.eclipse.paho.android.service)
+    implementation("org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.0")
+    implementation("org.eclipse.paho:org.eclipse.paho.android.service:1.1.1")
+    implementation("com.google.android.material:material:1.11.0")
     implementation("com.squareup.okhttp3:okhttp-sse:4.11.0")
+    implementation("androidx.core:core-splashscreen:1.0.1")
+
     implementation(libs.okhttp)
     implementation(libs.mpandroidchart)
     implementation(libs.androidx.core.ktx)

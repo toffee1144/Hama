@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.widget.Toast
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.findNavController
 import androidx.navigation.navOptions
 import androidx.navigation.ui.AppBarConfiguration
@@ -11,12 +12,29 @@ import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupWithNavController
 import com.example.hama2.databinding.ActivityMainBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var appBarConfiguration: AppBarConfiguration
 
     override fun onCreate(s: Bundle?) {
+
+        val splashScreen = installSplashScreen()
+
+        // Keep splash for 2 seconds using a flag
+        var keepSplash = true
+        splashScreen.setKeepOnScreenCondition { keepSplash }
+
+        // Delay in a coroutine
+        CoroutineScope(Dispatchers.Main).launch {
+            delay(2000) // 2-second delay
+            keepSplash = false // Allow transition
+        }
+
         super.onCreate(s)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)

@@ -1,5 +1,6 @@
 package com.example.hama2
 
+import android.R
 import android.net.Uri
 
 /**
@@ -23,42 +24,9 @@ data class ServerResponse(
  * Data model for chart points (hour of day, measured value).
  */
 data class ChartData(
-    val hour: Float,
-    val value: Float
-)
-
-/**
- * Data model for card icon.
- */
-data class IconData(
-    val signal: String,
-    val lastUpdate: String,
-    val vibration: String,
-    val sunlight: String
-)
-
-/**
- * Single feature (subtitle + value + optional action button text).
- */
-data class FeatureData(
-    val subtitle: String,
-    val value: String,
-    val action: String? = null
-)
-
-
-/**
- * All four features, matching your `/api/features` JSON.
- */
-data class FeaturesResponse(
-    val volume: FeatureData,
-    val luxThreshold: FeatureData,
-    val autoHour: FeatureData
-)
-
-data class ToggleResponse(
-    val success: Boolean,
-    val message: String? = null
+    val hour: String,
+    val value: Float,
+    val index: Int
 )
 
 /**
