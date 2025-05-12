@@ -24,7 +24,7 @@ object ApiService {
         )
         .build()
 
-    private const val BASE_URL = "http://192.168.1.16:5000/api/"
+    private const val BASE_URL = "http://192.168.1.28:5000/api/"
     private const val WEATHER_URL = "https://api.openweathermap.org/data/2.5/weather?lat=-6.20927&lon=106.82&appid=b069d73bbbf77d5a83df8387fa85def1"
 
     fun sendMessage(

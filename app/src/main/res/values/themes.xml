@@ -9,7 +9,7 @@
 
     <style name="Theme.MyApp.Splash" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:windowSplashScreenBackground">@color/white</item>
-        <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_question</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/splashscreen_foreground</item>
         <item name="android:windowSplashScreenIconBackgroundColor">@color/white</item>
         <item name="postSplashScreenTheme">@style/Theme.Hama2</item>
     </style>

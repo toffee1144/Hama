@@ -13,13 +13,55 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="@color/Default_Purple"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#F1EBF5">
+
+                <ImageView
+                    android:id="@+id/center_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:src="@drawable/ic_question"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.959"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.555" />
+
+                <TextView
+                    android:id="@+id/center_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="M. Crow"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+
     </com.google.android.material.appbar.AppBarLayout>
 
     <include
         layout="@layout/content_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="56dp"
         android:layout_marginBottom="@dimen/bottom_nav_height"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
@@ -31,47 +73,7 @@
         android:layout_gravity="bottom"
         app:menu="@menu/bottom_nav_menu" />
 
-    <!-- your TopNavigationView -->
     <!-- Custom TopNavigationView -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:orientation="vertical"
-        android:background="#761919"
-        android:gravity="center">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="411dp"
-            android:layout_height="match_parent">
-
-            <ImageView
-                android:id="@+id/center_icon"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:src="@drawable/ic_question"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.957"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/center_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Hello!"
-                android:textColor="@android:color/white"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </LinearLayout>
 
     <!-- small clickable ImageView, positioned to the right -->
 
