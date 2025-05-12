@@ -23,7 +23,7 @@ class VideoFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         videoView = view.findViewById(R.id.videoView)
-        val videoUri = "android.resource://${requireContext().packageName}/${R.raw.roll}".toUri()
+        val videoUri = "android.resource://${requireContext().packageName}/${R.raw.testing}".toUri()
 
         val mediaController = MediaController(requireContext()).apply {
             setAnchorView(videoView)
