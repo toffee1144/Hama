@@ -1,6 +1,18 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+}
+
+// Load environment variables from .env file
+val envFile = rootProject.file(".env")
+val envProps = Properties()
+
+if (envFile.exists()) {
+    envFile.inputStream().use { stream ->
+        envProps.load(stream)
+    }
 }
 
 android {
@@ -39,6 +51,7 @@ android {
 }
 
 dependencies {
+    implementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
     implementation (libs.androidx.localbroadcastmanager)
     implementation(libs.logging.interceptor.v490)
     implementation(libs.org.eclipse.paho.client.mqttv3)

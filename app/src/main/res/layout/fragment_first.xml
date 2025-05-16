@@ -2,7 +2,8 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#F0F4F8">
 
     <!-- Chat messages list -->
     <androidx.recyclerview.widget.RecyclerView
@@ -11,7 +12,8 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/inputLayout"
         android:padding="8dp"
-        android:clipToPadding="false" />
+        android:clipToPadding="false"
+        android:backgroundTint="@color/color_background" />
 
     <!-- Input area: preview + action row -->
     <LinearLayout
@@ -19,9 +21,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:orientation="vertical"
-        android:background="?attr/colorSurface"
+        android:background="#EEF7F4"
         android:elevation="4dp"
+        android:orientation="vertical"
         android:padding="4dp">
 
         <!-- Image preview (hidden until user picks an image) -->
@@ -29,18 +31,17 @@
             android:id="@+id/ivPreview"
             android:layout_width="150dp"
             android:layout_height="150dp"
-            android:layout_margin="8dp"
-            android:visibility="gone"
             android:layout_gravity="start"
-            android:scaleType="centerCrop" />
+            android:layout_margin="8dp"
+            android:scaleType="centerCrop"
+            android:visibility="gone" />
 
-        <!-- Row for attach, text input, send -->
+        <!-- Row for attach, text input, send, photo -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <!-- Attach image button -->
             <ImageButton
                 android:id="@+id/btnAttach"
                 android:layout_width="wrap_content"
@@ -51,7 +52,6 @@
                 android:src="@android:drawable/ic_menu_gallery"
                 android:visibility="gone" />
 
-            <!-- Message input field -->
             <EditText
                 android:id="@+id/etMessage"
                 android:layout_width="0dp"
@@ -62,22 +62,38 @@
                 android:maxLines="4"
                 android:padding="12dp" />
 
-            <!-- Send message button -->
             <Button
                 android:id="@+id/btnSend"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
+                android:backgroundTint="@color/color_primary"
                 android:text="Send" />
 
             <Button
                 android:id="@+id/btnInsertPhoto"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:backgroundTint="@color/color_primary"
                 android:text="Photo" />
-
-
         </LinearLayout>
+
+        <!-- Predict button row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnPredict"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:backgroundTint="@color/color_primary"
+                android:text="Predict" />
+        </LinearLayout>
+
     </LinearLayout>
 
 </RelativeLayout>

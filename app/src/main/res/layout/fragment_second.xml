@@ -24,9 +24,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:layout_margin="8dp"
-            android:background="#2C5F7D"
             android:padding="16dp"
-            app:cardBackgroundColor="#FCFFFFFF"
             app:cardCornerRadius="8dp"
             app:cardElevation="4dp"
             tools:visibility="visible">
@@ -35,7 +33,7 @@
                 android:id="@+id/constraint_weather"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:visibility="visible">
+                android:background="#FCFFFFFF">
 
                 <ImageView
                     android:id="@+id/img_weather_icon"
@@ -50,14 +48,13 @@
 
                 <TextView
                     android:id="@+id/txt_location"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
                     android:layout_marginTop="12dp"
                     android:text="Jakarta, Indonesia"
                     android:textSize="16sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintEnd_toStartOf="@+id/img_large_weather"
                     app:layout_constraintStart_toEndOf="@id/img_weather_icon"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -87,7 +84,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
                     android:layout_marginTop="16dp"
-                    android:background="#664FA3"
+                    android:background="@color/color_primary_dark"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/txt_temperature" />
@@ -112,7 +109,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
-                        app:cardBackgroundColor="#FFFFFFFF"
+                        app:cardBackgroundColor="#2CEEF7F4"
                         app:cardCornerRadius="8dp"
                         app:cardElevation="0dp"
                         app:useCompatPadding="false">
@@ -297,7 +294,7 @@
                 android:layout_width="188.5dp"
                 android:layout_height="match_parent"
                 android:layout_margin="4dp"
-                android:background="#2C5F7D"
+                android:background="#FCFFFFFF"
                 android:padding="16dp"
                 app:cardBackgroundColor="#FCFFFFFF"
                 app:cardCornerRadius="8dp"
@@ -307,7 +304,8 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/constraint_feature_a"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:background="#FCFFFFFF">
 
                     <ImageView
                         android:id="@+id/img_feat_C_icon"
@@ -359,6 +357,7 @@
                         android:layout_height="37dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginBottom="8dp"
+                        android:backgroundTint="@color/color_button_off"
                         android:text="Turn On"
                         android:textSize="12sp"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -435,6 +434,7 @@
                         android:id="@+id/btn_UV"
                         android:layout_width="147dp"
                         android:layout_height="37dp"
+                        android:backgroundTint="@color/color_button_off"
                         android:text="Turn On"
                         android:textSize="12sp"
                         app:iconTint="#FFFFFF"
@@ -495,6 +495,7 @@
                         android:layout_width="147dp"
                         android:layout_height="37dp"
                         android:layout_marginTop="38dp"
+                        android:backgroundTint="@color/color_button_off"
                         android:text="Turn On"
                         android:textSize="12sp"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -543,6 +544,7 @@
                         android:layout_width="147dp"
                         android:layout_height="37dp"
                         android:layout_marginTop="39dp"
+                        android:backgroundTint="@color/color_button_off"
                         android:text="Turn On"
                         android:textSize="12sp"
                         app:layout_constraintBottom_toBottomOf="parent"

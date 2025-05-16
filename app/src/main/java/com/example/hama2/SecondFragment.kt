@@ -216,7 +216,7 @@ class SecondFragment : Fragment() {
         button.backgroundTintList = ColorStateList.valueOf(
             ContextCompat.getColor(
                 requireContext(),
-                if (isOn) android.R.color.holo_purple else R.color.Default_Purple
+                if (isOn) R.color.color_primary else R.color.color_button_off
             )
         )
         (button as? Button)?.text = if (isOn) "ON" else "OFF"
@@ -244,7 +244,15 @@ class SecondFragment : Fragment() {
             activity?.runOnUiThread {
                 if (!data.isNullOrEmpty()) {
                     val entries = data.map { Entry(it.index.toFloat(), it.value) }
+
+                    val cPrimary = ContextCompat.getColor(requireContext(), R.color.color_primary)
+                    val cOnBackground = ContextCompat.getColor(requireContext(), R.color.color_on_background)
+
                     val dataSet = LineDataSet(entries, "Radar Turned On").apply {
+                        color = cPrimary // Line color
+                        setCircleColor(color) // Circle color
+                        valueTextColor = cOnBackground // Value label text color
+
                         lineWidth = 2f
                         circleRadius = 4f
                         setDrawValues(true)

@@ -17,14 +17,15 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:background="@color/Default_Purple"
+            android:background="#EEF7F4"
             android:gravity="center"
             android:orientation="vertical">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#F1EBF5">
+                android:background="#f7f7e4"
+                android:backgroundTint="#EEF7F4">
 
                 <ImageView
                     android:id="@+id/center_icon"
@@ -71,10 +72,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        app:menu="@menu/bottom_nav_menu" />
-
-    <!-- Custom TopNavigationView -->
-
-    <!-- small clickable ImageView, positioned to the right -->
+        app:backgroundTint="#ECF5F2"
+        app:menu="@menu/bottom_nav_menu"
+        />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

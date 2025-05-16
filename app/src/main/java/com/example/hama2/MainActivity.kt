@@ -1,7 +1,9 @@
 package com.example.hama2
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.findNavController
 import androidx.navigation.navOptions
@@ -42,6 +44,11 @@ class MainActivity : AppCompatActivity() {
             R.id.ThirdFragment
         ))
 
+        // Set the color of the active indicator (pill) in the BottomNavigationView
+        binding.bottomNav.itemActiveIndicatorColor =
+            ColorStateList.valueOf(ContextCompat.getColor(this, R.color.color_primary))
+
+
         // Hook BottomNav into NavController
         binding.bottomNav.setOnItemSelectedListener { item ->
             // Determine which destination to go to
@@ -61,7 +68,7 @@ class MainActivity : AppCompatActivity() {
                     // popUpTo the nav_graph start and clear anything above it
                     popUpTo(R.id.nav_graph) { inclusive = false }
                     // avoid multiple copies if tapping the same tab twice
-                    launchSingleTop = true
+                    launchSingleTop = false
                 }
             )
             true
