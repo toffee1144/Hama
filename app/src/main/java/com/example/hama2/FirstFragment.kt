@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.speech.tts.TextToSpeech
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,14 +16,18 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hama2.databinding.FragmentFirstBinding
 import android.widget.Toast
+import java.util.Locale
 
-class FirstFragment : Fragment() {
+class FirstFragment : Fragment(), TextToSpeech.OnInitListener {
+    private lateinit var textToSpeech: TextToSpeech
+    private var isTtsReady = false
     private var _binding: FragmentFirstBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var adapter: MessageAdapter
     private var pickedImageUri: Uri? = null
     private var cameraImageUri: Uri? = null
+    private var isPredictMode = false
 
     // Launcher to take picture
     private val takePictureLauncher = registerForActivityResult(
@@ -52,6 +57,13 @@ class FirstFragment : Fragment() {
         }
     }
 
+    override fun onInit(status: Int) {
+        if (status == TextToSpeech.SUCCESS) {
+            textToSpeech.language = Locale.US
+            isTtsReady = true
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -65,7 +77,14 @@ class FirstFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // init RecyclerView + Adapter
-        adapter = MessageAdapter(mutableListOf())
+        textToSpeech = TextToSpeech(requireContext(), this)
+
+        adapter = MessageAdapter(
+            mutableListOf(),
+            textToSpeech
+        ) { isTtsReady }
+        binding.rvMessages.adapter = adapter
+
         binding.rvMessages.apply {
             layoutManager = LinearLayoutManager(requireContext()).apply {
                 stackFromEnd = true
@@ -81,6 +100,7 @@ class FirstFragment : Fragment() {
                 return@setOnClickListener
             }
 
+            // Add user message to chat (for both predict and normal)
             adapter.addMessage(
                 Message(
                     text = text,
@@ -89,21 +109,64 @@ class FirstFragment : Fragment() {
                 )
             )
 
+            // Clear input and hide preview
             binding.etMessage.text?.clear()
             pickedImageUri = null
             binding.ivPreview.visibility = View.GONE
 
-            ApiService.sendMessage(requireContext(), text, uri) { serverResponse ->
-                val replyText = serverResponse.response ?: serverResponse.error ?: "Unknown error."
-                adapter.addMessage(
-                    Message(
-                        text = replyText,
-                        isUser = false
+            if (isPredictMode) {
+                // Send to /api/predict
+                ApiService.sendPredictRequest(requireContext(), text ?: "") { response ->
+                    val replyText = response.response ?: response.error ?: "Unknown error."
+                    adapter.addMessage(
+                        Message(
+                            text = replyText,
+                            isUser = false
+                        )
                     )
-                )
-                binding.rvMessages.scrollToPosition(adapter.itemCount - 1)
+                    binding.rvMessages.scrollToPosition(adapter.itemCount - 1)
+
+                    // Optionally reset predict mode off
+                    isPredictMode = false
+                    binding.btnPredict.setBackgroundColor(
+                        ContextCompat.getColor(requireContext(), R.color.color_primary)
+                    )
+                }
+            } else {
+                // Send to /api/message (with possible image)
+                ApiService.sendMessage(requireContext(), text, uri) { serverResponse ->
+                    val replyText = serverResponse.response ?: serverResponse.error ?: "Unknown error."
+                    adapter.addMessage(
+                        Message(
+                            text = replyText,
+                            isUser = false
+                        )
+                    )
+                    binding.rvMessages.scrollToPosition(adapter.itemCount - 1)
+                }
             }
         }
+
+
+
+        binding.btnPredict.setOnClickListener {
+            isPredictMode = !isPredictMode  // toggle predict mode
+
+            if (isPredictMode) {
+                // change Predict button to active color
+                binding.btnPredict.setBackgroundColor(
+                    ContextCompat.getColor(requireContext(), R.color.color_primary_dark) // active color
+                )
+                Toast.makeText(requireContext(), "Predict mode ON", Toast.LENGTH_SHORT).show()
+            } else {
+                // revert Predict button color
+                binding.btnPredict.setBackgroundColor(
+                    ContextCompat.getColor(requireContext(), R.color.color_primary) // normal color
+                )
+                Toast.makeText(requireContext(), "Predict mode OFF", Toast.LENGTH_SHORT).show()
+            }
+        }
+
 
         binding.btnInsertPhoto.setOnClickListener {
             checkCameraPermissionAndOpenCamera()
@@ -138,6 +201,8 @@ class FirstFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        textToSpeech.stop()
+        textToSpeech.shutdown()
         _binding = null
     }
 }

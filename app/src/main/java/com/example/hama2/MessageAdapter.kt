@@ -1,5 +1,6 @@
 package com.example.hama2
 
+import android.speech.tts.TextToSpeech
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,7 +9,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class MessageAdapter(
-    private val items: MutableList<Message>
+    private val items: MutableList<Message>,
+    private val textToSpeech: TextToSpeech,
+    private val isTtsReady: () -> Boolean
+
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -35,7 +39,6 @@ class MessageAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val msg = items[position]
         if (holder is UserVH) {
-            // user message: may have an image
             holder.tv.text = msg.text ?: ""
             if (msg.imageUri != null) {
                 holder.iv.visibility = View.VISIBLE
@@ -44,8 +47,7 @@ class MessageAdapter(
                 holder.iv.visibility = View.GONE
             }
         } else if (holder is ResponseVH) {
-            // bot response: text only
-            holder.tv.text = msg.text ?: ""
+            holder.bind(msg)  // Use the new bind method for ResponseVH
         }
     }
 
@@ -57,6 +59,22 @@ class MessageAdapter(
     // ViewHolder for response
     inner class ResponseVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tv: TextView = itemView.findViewById(R.id.tvMessage)
+        val micButton: ImageView = itemView.findViewById(R.id.btnSpeak)
+
+        private var currentText: String? = null
+
+        init {
+            micButton.setOnClickListener {
+                if (isTtsReady() && !currentText.isNullOrEmpty()) {
+                    textToSpeech.speak(currentText, TextToSpeech.QUEUE_FLUSH, null, null)
+                }
+            }
+        }
+
+        fun bind(message: Message) {
+            currentText = message.text
+            tv.text = currentText ?: ""
+        }
     }
 
     /** Add one message and notify */

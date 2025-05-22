@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
+import androidx.fragment.app.FragmentActivity
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -24,7 +25,7 @@ object ApiService {
         )
         .build()
 
-    private const val BASE_URL = "http://192.168.0.246:5000/api/"
+    private const val BASE_URL = "http://192.168.1.16:5000/api"
     private const val WEATHER_URL = "https://api.openweathermap.org/data/2.5/weather?lat=-6.20927&lon=106.82&appid=b069d73bbbf77d5a83df8387fa85def1"
 
     fun sendMessage(
@@ -85,6 +86,44 @@ object ApiService {
         })
     }
 
+    fun sendPredictRequest(
+        context: Context,
+        prompt: String,
+        onResult: (ServerResponse) -> Unit
+    ) {
+        // 1) Build JSON request body
+        val json = JSONObject().put("prompt", prompt).toString()
+        val requestBody = json
+            .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+
+        // 2) Build request, asking for plain text
+        val request = Request.Builder()
+            .url("$BASE_URL/predict")
+            .addHeader("Accept", "text/plain")
+            .post(requestBody)
+            .build()
+
+        // 3) Fire it off
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                (context as? FragmentActivity)?.runOnUiThread {
+                    onResult(ServerResponse(error = "Network error: ${e.localizedMessage}"))
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val bodyString = response.body?.string().orEmpty()
+                (context as? FragmentActivity)?.runOnUiThread {
+                    if (!response.isSuccessful) {
+                        onResult(ServerResponse(error = "Error ${response.code}: $bodyString"))
+                    } else {
+                        // bodyString is already raw text from the model
+                        onResult(ServerResponse(response = bodyString))
+                    }
+                }
+            }
+        })
+    }
 
     // ----------------- HOME FRAGMENTS ---------------------
 
@@ -132,55 +171,6 @@ object ApiService {
         })
     }
 
-/*
-    fun listenToChartStream(onPointReceived: (ChartData) -> Unit) {
-        val request = Request.Builder()
-            .url("${BASE_URL}chart/stream")
-            .build()
-
-        EventSources.createFactory(client)
-            .newEventSource(request, object : EventSourceListener() {
-
-                override fun onOpen(eventSource: EventSource, response: okhttp3.Response) {
-                    Log.d("ApiService", "SSE connected")
-                }
-
-                override fun onEvent(
-                    eventSource: EventSource,
-                    id: String?,
-                    type: String?,
-                    data: String
-                ) {
-                    try {
-                        val obj = JSONObject(data)
-                        val hourStr = obj.optString("hour", "00:00")
-                        val hour = try {
-                            hourStr.substringBefore(":").toFloat()
-                        } catch (e: Exception) {
-                            0f
-                        }
-                        val value = obj.optInt("value", 0).toFloat()
-                        onPointReceived(ChartData(hour, value))
-                    } catch (e: Exception) {
-                        Log.e("ApiService", "Failed to parse SSE data", e)
-                    }
-                }
-
-                override fun onClosed(eventSource: EventSource) {
-                    Log.d("ApiService", "SSE closed")
-                }
-
-                override fun onFailure(
-                    eventSource: EventSource,
-                    t: Throwable?,
-                    response: okhttp3.Response?
-                ) {
-                    Log.e("ApiService", "SSE error", t)
-                }
-            })
-    }
-*/
-
     fun fetchWeatherInfo(
         context: Context,
         onResult: (String?, String?, String?) -> Unit
@@ -226,138 +216,6 @@ object ApiService {
             }
         })
     }
-
-
-    /* 4 ICON VALUES FROM API
-    fun fetchIconValues(
-        context: Context,
-        onResult: (IconData?, String?) -> Unit
-    ) {
-        val request = Request.Builder()
-            .url("${BASE_URL}/status") // change endpoint if needed
-            .get()
-            .build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                Log.e("ApiService", "Failed to fetch icons", e)
-                onResult(null, "Network error: ${e.localizedMessage}")
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                val body = response.body?.string()
-                if (!response.isSuccessful || body.isNullOrEmpty()) {
-                    onResult(null, "Error ${response.code}")
-                    return
-                }
-
-                try {
-                    val json = JSONObject(body)
-                    val data = IconData(
-                        signal = json.optString("signal", "N/A"),
-                        lastUpdate = json.optString("last_update", "N/A"),
-                        vibration = json.optString("vibration", "N/A"),
-                        sunlight = json.optString("sunlight", "N/A")
-                    )
-                    onResult(data, null)
-                } catch (e: Exception) {
-                    Log.e("ApiService", "JSON parsing error", e)
-                    onResult(null, "Parsing error")
-                }
-            }
-        })
-    }
-
-    fun fetchFeatures(
-        context: Context,
-        onResult: (FeaturesResponse?, String?) -> Unit
-    ) {
-        val request = Request.Builder()
-            .url("${BASE_URL}/features")
-            .get()
-            .build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                Log.e("ApiService", "fetchFeatures failed", e)
-                onResult(null, "Network error: ${e.localizedMessage}")
-            }
-            override fun onResponse(call: Call, response: Response) {
-                val body = response.body?.string()
-                if (!response.isSuccessful || body.isNullOrEmpty()) {
-                    onResult(null, "Error ${response.code}")
-                    return
-                }
-                try {
-                    val j = JSONObject(body)
-                    // parse each feature
-                    val a = j.getJSONObject("speaker")
-                    val b = j.getJSONObject("uv_lamp")
-                    val c = j.getJSONObject("rat")
-
-                    val resp = FeaturesResponse(
-                        volume = FeatureData(
-                            subtitle = a.optString("subtitle", ""),
-                            value    = a.optString("value", ""),
-                        ),
-                        luxThreshold = FeatureData(
-                            subtitle = b.optString("subtitle", ""),
-                            value    = b.optString("value", "")
-                        ),
-                        autoHour = FeatureData(
-                            subtitle = c.optString("subtitle", ""),
-                            value    = c.optString("value", "")
-                        )
-                    )
-                    onResult(resp, null)
-                } catch (e: Exception) {
-                    Log.e("ApiService", "JSON parse error", e)
-                    onResult(null, "Parse error")
-                }
-            }
-        })
-    }
-
-    fun toggleFeature(
-        context: Context,
-        featureKey: String,
-        newState: Boolean,
-        onResult: (Boolean, String?) -> Unit
-    ) {
-        // JSON body: { "state": true }
-        val json = JSONObject().put("state", newState)
-        val body = json.toString()
-            .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
-
-        val request = Request.Builder()
-                .url("$BASE_URL/features/$featureKey/toggle")
-            .post(body)
-            .build()
-
-        client.newCall(request).enqueue(object: Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                Log.e("ApiService", "toggleFeature failure", e)
-                onResult(false, e.localizedMessage)
-            }
-            override fun onResponse(call: Call, response: Response) {
-                val text = response.body?.string()
-                if (!response.isSuccessful || text.isNullOrEmpty()) {
-                    onResult(false, "Error ${response.code}")
-                    return
-                }
-                try {
-                    val j = JSONObject(text)
-                    val ok = j.optBoolean("success", response.isSuccessful)
-                    val msg = j.optString("message", null)
-                    onResult(ok, msg)
-                } catch (e: Exception) {
-                    Log.e("ApiService", "toggle parse error", e)
-                    onResult(false, "Parse error")
-                }
-            }
-        })
-    }
-    */
 
     // ------------------ THIRD FRAGMENT --------------------------
 
