@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/SecondFragment"
         android:icon="@drawable/icon_home"
-        android:title="Home" />
+        android:title="Home"
+        app:cnb_iconColor="@color/color_primary" />
 
     <item
         android:id="@+id/FirstFragment"
         android:icon="@drawable/tabler__message_chatbot"
-        android:title="ChatBot" />
+        android:title="ChatBot"
+        app:cnb_iconColor="@color/color_primary" />
 
     <item
         android:id="@+id/ThirdFragment"
         android:icon="@drawable/mdi_light__settings"
-        android:title="Settings" />
-
+        android:title="Settings"
+        app:cnb_iconColor="@color/color_primary"/>
 </menu>
+

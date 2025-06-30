@@ -17,7 +17,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:background="#EEF7F4"
+            android:background="@color/color_background"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -25,7 +25,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="#f7f7e4"
-                android:backgroundTint="#EEF7F4">
+                android:backgroundTint="@color/color_background">
 
                 <ImageView
                     android:id="@+id/center_icon"
@@ -67,13 +67,16 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <!-- your BottomNavigationView -->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
+    <com.ismaeldivita.chipnavigation.ChipNavigationBar
         android:id="@+id/bottom_nav"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="108dp"
         android:layout_gravity="bottom"
-        app:backgroundTint="#ECF5F2"
-        app:menu="@menu/bottom_nav_menu"
-        />
+        android:background="@color/color_background"
+        app:cnb_backgroundColor="@color/white"
+        app:cnb_iconSize="24dp"
+        app:cnb_menuResource="@menu/bottom_nav_menu"
+        app:cnb_textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:cnb_unselectedColor="@color/color_button_off" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

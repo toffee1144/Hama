@@ -51,15 +51,15 @@ android {
 }
 
 dependencies {
-    implementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:2.0.21")
+    implementation("com.github.IsmaelDivita:chip-navigation-bar:1.4.0")
+    implementation(libs.dotenv.kotlin)
     implementation (libs.androidx.localbroadcastmanager)
     implementation(libs.logging.interceptor.v490)
     implementation(libs.org.eclipse.paho.client.mqttv3)
     implementation(libs.org.eclipse.paho.android.service)
-    implementation("org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.0")
-    implementation("org.eclipse.paho:org.eclipse.paho.android.service:1.1.1")
-    implementation("com.google.android.material:material:1.11.0")
-    implementation("com.squareup.okhttp3:okhttp-sse:4.11.0")
+    implementation(libs.material.v1110)
+    implementation(libs.okhttp.sse)
     implementation("androidx.core:core-splashscreen:1.0.1")
 
     implementation(libs.okhttp)

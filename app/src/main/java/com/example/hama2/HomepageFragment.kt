@@ -17,7 +17,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
-import com.example.hama2.databinding.FragmentSecondBinding
+import com.example.hama2.databinding.FragmentHomepageBinding
 import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
@@ -30,9 +30,9 @@ import org.eclipse.paho.client.mqttv3.MqttMessage
 import org.json.JSONObject
 import java.util.*
 
-class SecondFragment : Fragment() {
+class HomepageFragment : Fragment() {
 
-    private var _binding: FragmentSecondBinding? = null
+    private var _binding: FragmentHomepageBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var mqttService: MqttService
@@ -52,19 +52,48 @@ class SecondFragment : Fragment() {
             else Log.w("SecondFragment", "User denied POST_NOTIFICATIONS")
         }
 
+    private fun getSavedDeviceId(): String? {
+        val prefs = requireContext().getSharedPreferences("MyPrefs", android.content.Context.MODE_PRIVATE)
+        return prefs.getString("espId", null)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentSecondBinding.inflate(inflater, container, false)
+        _binding = FragmentHomepageBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val deviceId = getSavedDeviceId()
+        if (deviceId.isNullOrEmpty()) {
+            Toast.makeText(requireContext(), "Please set Device ID first", Toast.LENGTH_SHORT).show()
+
+            // Disable all control buttons
+            binding.btnRat.isEnabled = false
+            binding.btnSpeaker.isEnabled = false
+            binding.btnUV.isEnabled = false
+            binding.btnAutomation.isEnabled = false
+
+            // Optional: Set click listeners to show warning
+            val showWarning = View.OnClickListener {
+                Toast.makeText(requireContext(), "Please set Device ID first", Toast.LENGTH_SHORT).show()
+            }
+
+            binding.btnRat.setOnClickListener(showWarning)
+            binding.btnSpeaker.setOnClickListener(showWarning)
+            binding.btnUV.setOnClickListener(showWarning)
+            binding.btnAutomation.setOnClickListener(showWarning)
+
+            return  // Exit early to prevent further setup
+        }
+        val brokerUrl = MqttService.getBrokerUrl(requireContext())
+
         // 1) MQTT setup + callback
-        mqttService = MqttService().apply {
+        mqttService = MqttService(requireContext()).apply {
             connect()
             subscribe(MqttService.TOPIC_DATA)
             subscribe(MqttService.CONTROL_DATA)
@@ -84,12 +113,15 @@ class SecondFragment : Fragment() {
                                 binding.txtLux.text = json.optInt("lux").toString()
                                 binding.txtVibration.text = json.optInt("vibration").toString()
                                 binding.txtSignal.text = json.optInt("signal").toString()
-                                binding.txtUpdate.text =
-                                    DateFormat.format("HH:mm:ss", System.currentTimeMillis()).toString()
+                                binding.txtUpdate.text = DateFormat.format("HH:mm:ss", System.currentTimeMillis()).toString()
 
                                 if (json.optInt("vibration") > 0) {
                                     showDetectionNotification("Vibration detected!")
                                 }
+
+                                val radar0 = json.optInt("radar_0", 0)
+                                val radar1 = json.optInt("radar_1", 0)
+                                binding.txtDetection.text = if (radar0 == 1 || radar1 == 1) "Detected!" else "No Detection"
                             }
 
                             // CONTROL topic: update states
@@ -313,8 +345,9 @@ class SecondFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        if (::mqttService.isInitialized) {
+            mqttService.disconnect()
+        }
         _binding = null
-        mqttService.disconnect()
-        refreshHandler.removeCallbacksAndMessages(null)
     }
 }

@@ -1,5 +1,6 @@
 package com.example.hama2
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -10,10 +11,11 @@ import android.widget.EditText
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.edit
 
-class ThirdFragment : Fragment() {
+class SettingFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?)
-            = inflater.inflate(R.layout.fragment_third, container, false)
+            = inflater.inflate(R.layout.fragment_setting, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val label2 = view.findViewById<TextView>(R.id.label2)
@@ -80,12 +82,16 @@ class ThirdFragment : Fragment() {
                 return@setOnClickListener
             }
 
+            val numericId = id.removePrefix("Dev-").trim()
+
             ApiService.sendDeviceId(requireContext(), DeviceRequest(id)) { res ->
                 activity?.runOnUiThread {
                     if (res.success) {
-                        // 1) update the hint to the newly set ID
+                        // Save only the numeric part (e.g., "215")
+                        val prefs = requireContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+                        prefs.edit { putString("espId", numericId) }
+
                         edtDevice.hint = "Current ID : $id"
-                        // 2) clear the input so the hint is visible again
                         edtDevice.setText("")
 
                         Toast.makeText(context, "Device ID set", Toast.LENGTH_SHORT).show()

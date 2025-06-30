@@ -1,4 +1,4 @@
 <resources>
-    <dimen name="bottom_nav_height">100dp</dimen>
+    <dimen name="bottom_nav_height">76dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 </resources>

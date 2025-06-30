@@ -6,8 +6,8 @@
     android:id="@+id/nested_scroll_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F0F4F8"
-    android:paddingBottom="26dp">
+    android:background="@color/color_background"
+    android:paddingBottom="40dp">
 
 
     <LinearLayout
@@ -92,7 +92,7 @@
                 <!-- Icons Row -->
                 <LinearLayout
                     android:id="@+id/icons_row"
-                    android:layout_width="331dp"
+                    android:layout_width="400dp"
                     android:layout_height="69dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
@@ -104,6 +104,46 @@
                     app:layout_constraintTop_toBottomOf="@id/divider_line">
 
                     <!-- Icon Card 1 -->
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/card_icon_5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        app:cardBackgroundColor="#2CEEF7F4"
+                        app:cardCornerRadius="8dp"
+                        app:cardElevation="0dp"
+                        app:useCompatPadding="false">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical"
+                            android:paddingHorizontal="4dp"
+                            android:paddingVertical="8dp">
+
+                            <TextView
+                                android:id="@+id/txt_icon_5_title"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="Detection"
+                                android:textAlignment="center"
+                                android:textSize="12sp" />
+
+                            <TextView
+                                android:id="@+id/txt_detection"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:ellipsize="end"
+                                android:gravity="center"
+                                android:singleLine="true"
+                                android:text="No Detection"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
                     <androidx.cardview.widget.CardView
                         android:id="@+id/card_icon_1"
                         android:layout_width="wrap_content"
@@ -144,8 +184,6 @@
                                 android:textSize="12sp" />
                         </LinearLayout>
                     </androidx.cardview.widget.CardView>
-
-
                     <!-- Icon Card 2 -->
                     <androidx.cardview.widget.CardView
                         android:id="@+id/card_icon_2"

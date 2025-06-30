@@ -15,18 +15,35 @@ import java.io.IOException
 import okhttp3.sse.EventSource
 import okhttp3.sse.EventSourceListener
 import okhttp3.sse.EventSources
+import java.util.concurrent.TimeUnit
+
 
 object ApiService {
+
+    private const val BASE_URL = "http://8.215.5.183:5000/api/"
+    private const val WEATHER_URL = "https://api.openweathermap.org/data/2.5/weather?lat=-6.20927&lon=106.82&appid=b069d73bbbf77d5a83df8387fa85def1"
+
     private val client = OkHttpClient.Builder()
+        .connectTimeout(30, TimeUnit.SECONDS)
+        .readTimeout(30, TimeUnit.SECONDS)
+        .writeTimeout(30, TimeUnit.SECONDS)
+
+        // 1) Interceptor that injects the Connection header
+        .addInterceptor { chain ->
+            val original = chain.request()
+            val withConnectionClose = original.newBuilder()
+                .header("Connection", "close")   // replace any existing header
+                .build()
+            chain.proceed(withConnectionClose)
+        }
+
+        // 2) Your logging interceptor (as a network interceptor is fine for logging bodies)
         .addNetworkInterceptor(
             HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY
             }
         )
         .build()
-
-    private const val BASE_URL = "http://192.168.1.16:5000/api"
-    private const val WEATHER_URL = "https://api.openweathermap.org/data/2.5/weather?lat=-6.20927&lon=106.82&appid=b069d73bbbf77d5a83df8387fa85def1"
 
     fun sendMessage(
         context: Context,
@@ -50,7 +67,7 @@ object ApiService {
         }
 
         val request = Request.Builder()
-            .url("$BASE_URL/message")
+            .url("${BASE_URL}message")
             .post(requestBodyBuilder.build())
             .build()
 
@@ -98,7 +115,7 @@ object ApiService {
 
         // 2) Build request, asking for plain text
         val request = Request.Builder()
-            .url("$BASE_URL/predict")
+            .url("${BASE_URL}predict")
             .addHeader("Accept", "text/plain")
             .post(requestBody)
             .build()
@@ -131,7 +148,7 @@ object ApiService {
         onResult: (List<ChartData>?, String?) -> Unit
     ) {
         val request = Request.Builder()
-            .url("$BASE_URL/chart")
+            .url("${BASE_URL}chart")
             .get()
             .build()
 

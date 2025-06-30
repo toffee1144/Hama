@@ -7,9 +7,9 @@
 
     <fragment
         android:id="@+id/FirstFragment"
-        android:name="com.example.hama2.FirstFragment"
+        android:name="com.example.hama2.ChatbotFragment"
         android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_first">
+        tools:layout="@layout/fragment_chatbot">
 
         <action
             android:id="@+id/action_FirstFragment_to_SecondFragment"
@@ -20,9 +20,9 @@
     </fragment>
     <fragment
         android:id="@+id/SecondFragment"
-        android:name="com.example.hama2.SecondFragment"
+        android:name="com.example.hama2.HomepageFragment"
         android:label="@string/second_fragment_label"
-        tools:layout="@layout/fragment_second">
+        tools:layout="@layout/fragment_homepage">
 
         <action
             android:id="@+id/action_SecondFragment_to_FirstFragment"
@@ -33,9 +33,9 @@
     </fragment>
     <fragment
         android:id="@+id/ThirdFragment"
-        android:name="com.example.hama2.ThirdFragment"
+        android:name="com.example.hama2.SettingFragment"
         android:label="fragment_third"
-        tools:layout="@layout/fragment_third" >
+        tools:layout="@layout/fragment_setting" >
         <action
             android:id="@+id/action_thirdFragment_to_FirstFragment"
             app:destination="@id/FirstFragment" />

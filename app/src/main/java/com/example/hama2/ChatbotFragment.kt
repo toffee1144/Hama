@@ -14,14 +14,18 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.hama2.databinding.FragmentFirstBinding
 import android.widget.Toast
 import java.util.Locale
+import android.content.Intent
+import android.speech.RecognizerIntent
+import android.app.Activity
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
+import com.example.hama2.databinding.FragmentChatbotBinding
 
-class FirstFragment : Fragment(), TextToSpeech.OnInitListener {
+class ChatbotFragment : Fragment(), TextToSpeech.OnInitListener {
     private lateinit var textToSpeech: TextToSpeech
     private var isTtsReady = false
-    private var _binding: FragmentFirstBinding? = null
+    private var _binding: FragmentChatbotBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var adapter: MessageAdapter
@@ -64,12 +68,22 @@ class FirstFragment : Fragment(), TextToSpeech.OnInitListener {
         }
     }
 
+    private val speechRecognizerLauncher = registerForActivityResult(StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val data: Intent? = result.data
+            val matches = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+            if (!matches.isNullOrEmpty()) {
+                binding.etMessage.setText(matches[0])
+            }
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentFirstBinding.inflate(inflater, container, false)
+        _binding = FragmentChatbotBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -89,7 +103,23 @@ class FirstFragment : Fragment(), TextToSpeech.OnInitListener {
             layoutManager = LinearLayoutManager(requireContext()).apply {
                 stackFromEnd = true
             }
-            adapter = this@FirstFragment.adapter
+            adapter = this@ChatbotFragment.adapter
+        }
+
+        val speechSupported = requireActivity().packageManager
+            .queryIntentActivities(Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH), 0).isNotEmpty()
+
+        binding.btnMic.isEnabled = speechSupported
+
+        if (speechSupported) {
+            binding.btnMic.setOnClickListener {
+                val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                    putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                    putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+                    putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak now...")
+                }
+                speechRecognizerLauncher.launch(intent)
+            }
         }
 
         binding.btnSend.setOnClickListener {
@@ -108,6 +138,7 @@ class FirstFragment : Fragment(), TextToSpeech.OnInitListener {
                     isUser = true
                 )
             )
+
 
             // Clear input and hide preview
             binding.etMessage.text?.clear()
